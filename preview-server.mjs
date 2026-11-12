@@ -8,7 +8,9 @@ const types = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-
 createServer(async (req,res) => {
   try {
     const raw = decodeURIComponent((req.url || '/').split('?')[0]);
-    const relative = raw === '/' ? 'index.html' : raw.replace(/^\/+/, '');
+    const relative = raw === '/'
+      ? 'index.html'
+      : `${raw.replace(/^\/+/, '')}${raw.endsWith('/') ? 'index.html' : ''}`;
     const file = normalize(join(root, relative));
     if (!file.startsWith(normalize(root))) throw new Error('invalid path');
     const body = await readFile(file);

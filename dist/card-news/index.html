@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="주제만 입력하면 인스타그램 카드뉴스 초안을 만들고 편집·다운로드하는 카드메이커" />
+  <title>카드메이커 — 인스타그램 카드뉴스 스튜디오</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./integration.css" />
+  <style>
+    .brand span { white-space: nowrap; }
+    @media (max-width: 420px) {
+      .brand { gap: 6px; font-size: 14px; letter-spacing: -0.8px; }
+      .brand img { width: 32px !important; height: 32px !important; }
+      .top-actions .primary { padding: 0 9px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="topbar">
+    <a class="brand" href="../" aria-label="넥스트센텀 블로그 스튜디오로 이동">
+      <span class="brand-mark" aria-hidden="true">NC</span>
+      <span class="brand-copy"><small>NEXT CENTUM</small><strong>카드뉴스 스튜디오</strong></span>
+    </a>
+    <div class="top-actions">
+      <a class="blog-link" href="../"><span>블로그 작성</span></a>
+      <span class="save-state"><i></i> 자동 저장됨</span>
+      <button class="icon-button" id="resetBtn" title="처음부터">↻</button>
+      <button class="primary small" id="downloadAllBtn">전체 다운로드 <span>↓</span></button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel brief-panel">
+      <div class="panel-heading">
+        <span class="step">01</span>
+        <div><h1>무엇을 전할까요?</h1><p>한 문장이면 충분해요.</p></div>
+      </div>
+
+      <label class="field-label" for="topicInput">카드뉴스 주제</label>
+      <div class="topic-field">
+        <textarea id="topicInput" maxlength="80" placeholder="예: 번아웃 없이 꾸준히 일하는 방법">작은 브랜드를 위한 인스타그램 콘텐츠 전략</textarea>
+        <span><b id="topicCount">27</b>/80</span>
+      </div>
+
+      <div class="example-row" aria-label="추천 주제">
+        <button data-topic="초보자를 위한 ETF 투자 체크리스트"># ETF 입문</button>
+        <button data-topic="번아웃 없이 꾸준히 일하는 방법"># 번아웃</button>
+        <button data-topic="작은 공간을 넓어 보이게 만드는 인테리어 팁"># 인테리어</button>
+      </div>
+
+      <div class="field-grid">
+        <label><span>말투</span><select id="toneSelect"><option value="friendly">친근하고 명확하게</option><option value="expert">전문적이고 신뢰감 있게</option><option value="witty">재치 있고 가볍게</option><option value="calm">차분하고 따뜻하게</option></select></label>
+        <label><span>대상</span><select id="audienceSelect"><option value="starter">관심 있는 입문자</option><option value="creator">1인 창작자</option><option value="owner">소상공인·브랜드</option><option value="worker">직장인</option></select></label>
+      </div>
+
+      <label class="field-label" for="brandInput">계정 이름 <em>선택</em></label>
+      <input class="text-input" id="brandInput" value="@my.brand" placeholder="@your.name" />
+
+      <button class="generate-button" id="generateBtn">
+        <span class="spark">✦</span>
+        <span><b>카드뉴스 만들기</b><small>6장 구성 · 약 5초</small></span>
+        <span class="arrow">→</span>
+      </button>
+
+      <div class="helper-card">
+        <span>✎</span><p><b>좋은 주제의 기준</b><br>대상과 얻을 결과가 보이면 더 선명한 콘텐츠가 만들어져요.</p>
+      </div>
+    </aside>
+
+    <section class="stage" aria-label="카드 미리보기">
+      <div class="stage-top">
+        <div><span class="eyebrow">PREVIEW</span><h2>카드 미리보기</h2></div>
+        <div class="zoom-controls"><button id="zoomOut">−</button><span id="zoomLabel">72%</span><button id="zoomIn">＋</button></div>
+      </div>
+
+      <div class="canvas-wrap">
+        <button class="canvas-nav prev" id="prevBtn" aria-label="이전 카드">←</button>
+        <article class="card-canvas" id="cardCanvas">
+          <div class="card-noise"></div>
+          <div class="shape shape-one"></div><div class="shape shape-two"></div>
+          <header class="card-header"><span id="cardCategory">CONTENT NOTE</span><span id="cardNumber">01 / 06</span></header>
+          <div class="card-content" id="cardContent"></div>
+          <footer class="card-footer"><span id="cardBrand">@my.brand</span><span class="swipe">SWIPE <b>→</b></span></footer>
+        </article>
+        <button class="canvas-nav next" id="nextBtn" aria-label="다음 카드">→</button>
+      </div>
+
+      <div class="thumbs" id="thumbs"></div>
+      <p class="stage-hint">카드를 선택해 문구를 다듬어 보세요. 변경 내용은 즉시 반영돼요.</p>
+    </section>
+
+    <aside class="panel edit-panel">
+      <div class="panel-heading compact">
+        <span class="step">02</span>
+        <div><h2>나답게 다듬기</h2><p>디자인과 문구를 바꿔보세요.</p></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title"><span>컬러 테마</span><button id="randomTheme">랜덤 추천 ↗</button></div>
+        <div class="theme-list" id="themeList">
+          <button class="theme active" data-theme="lime" title="라임 펀치"><i style="--a:#d8ff63;--b:#141414;--c:#fffdf5"></i><span>라임 펀치</span></button>
+          <button class="theme" data-theme="coral" title="코랄 소다"><i style="--a:#ff6f61;--b:#4b35c5;--c:#fff8e7"></i><span>코랄 소다</span></button>
+          <button class="theme" data-theme="blue" title="쿨 블루"><i style="--a:#73d7ff;--b:#0d2b45;--c:#f3fbff"></i><span>쿨 블루</span></button>
+          <button class="theme" data-theme="mono" title="잉크 페이퍼"><i style="--a:#e9e4d9;--b:#171717;--c:#f8f5ed"></i><span>잉크 페이퍼</span></button>
+        </div>
+      </div>
+
+      <div class="section-block edit-fields">
+        <div class="section-title"><span>현재 카드 문구</span><small id="editingCard">1번째 카드</small></div>
+        <label><span>작은 제목</span><input id="kickerEdit" maxlength="30"></label>
+        <label><span>메인 제목</span><textarea id="titleEdit" maxlength="65"></textarea></label>
+        <label><span>설명</span><textarea id="bodyEdit" maxlength="150"></textarea></label>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title"><span>글자 정렬</span></div>
+        <div class="segment" id="alignSegment"><button data-align="left" class="active">≡ 왼쪽</button><button data-align="center">☰ 가운데</button></div>
+      </div>
+
+      <button class="download-button" id="downloadBtn"><span>PNG로 저장</span><small>1080 × 1350 px</small><b>↓</b></button>
+      <p class="download-note">인스타그램 피드 권장 비율 4:5로 저장됩니다.</p>
+    </aside>
+  </main>
+
+  <div class="toast" id="toast"><span>✓</span><p><b>완성했어요!</b><br>이미지 다운로드를 시작합니다.</p></div>
+  <script src="./app.js"></script>
+</body>
+</html>
